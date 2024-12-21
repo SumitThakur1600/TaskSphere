@@ -3,12 +3,19 @@ import axios from "axios";
 export default function EmployeePage(props) {
   const [empData, setEmpData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   useEffect(() => {
     const fetchemployee = async () => {
       try {
         const response = await axios.get(
           "https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001"
         );
+        if (response.data.length === 0) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
         setEmpData(response.data);
         console.log(empData);
         setLoading(false);
@@ -21,6 +28,13 @@ export default function EmployeePage(props) {
   }, []);
   if (loading) {
     return <h1 className="pl-4 text-2xl">Loading</h1>;
+  }
+  if (error) {
+    return (
+      <h1 className="pl-4 text-2xl text-red-500">
+        Check your API or try again later.
+      </h1>
+    );
   }
   return (
     <div className="container mx-auto p-5">
